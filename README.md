@@ -1,0 +1,54 @@
+# 💳 Mastercard ISO8583-1993 Parser (Golang)
+
+A Golang parser developed for reading and interpreting messages in the **ISO8583-1993** standard, with a focus on **Mastercard** files.
+
+## 📌 About the Project
+
+This project aims to parse ISO8583 messages, converting raw data (typically from files or streams) into understandable and manipulable structures in Golang.
+It was designed to facilitate analyses, reconciliations, and integrations with financial systems.
+
+---
+
+## ⚙️ Features
+
+- Reading of ISO8583 messages (Mastercard)
+- Interpretation of:
+  - MTI (Message Type Indicator)
+  - Bitmap (primary and secondary)
+  - Data Elements (variable and fixed fields)
+- Support for the **ISO8583-1993** standard
+- Ready structure for expanding new fields
+- Conversion to Golang objects (dict / classes)
+
+---
+
+## 🧠 How It Works
+
+The parser performs the following steps:
+1. Identifies the **MTI**
+2. Reads the **Bitmap** (to know which fields are present)
+3. Interprets each **Data Element** according to:
+   - Type (fixed or variable)
+   - Size
+   - Format
+
+---
+
+## 🛠️ Technologies Used
+
+- Golang 3.x
+- Typing with `typing`
+- String manipulation and binary parsing
+- Moov-io library for final parsing of elements
+
+---
+
+## 📄 License
+
+This project is under the [MIT license](LICENSE).
+
+---
+
+## 👨🏻‍💻 Author
+
+Developed by **Heitor Dairel**

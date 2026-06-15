@@ -12,8 +12,8 @@ import (
 
 func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
 	var (
-		indexStart, indexCurr     int = index, index
-		payload                   types.Data
+		indexStart, indexCurr     int        = index, index
+		payload                   types.Data = make(types.Data, 0, 5000)
 		segId, segLen, payloadLen int
 	)
 
@@ -46,15 +46,14 @@ func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
 
 }
 
-func (iso *Mastercard) fileIsoPayload() error {
+func (iso *ISO8583) fileIsoPayload() error {
 	var (
 		index, consumed int
-		lenRaw          int = len(iso.FilePathIso.FileData)
-		payload         types.Data
+		lenRaw          int        = len(iso.FilePathIso.FileData)
+		payload         types.Data = make(types.Data, 0, 5000)
 		msg             *iso8583.Message
-		field           map[int]field.Field
-		parseMap        *orderedmap.OrderedMap
-		parseOrderedMap []*orderedmap.OrderedMap
+		field           map[int]field.Field = make(map[int]field.Field, 129)
+		parseOrdMap     *orderedmap.OrderedMap
 		err             error
 	)
 
@@ -66,21 +65,19 @@ func (iso *Mastercard) fileIsoPayload() error {
 
 		msg = iso8583.NewMessage(speac.Iso85831993V1)
 
-		err = msg.Unpack(payload)
-
-		if err != nil {
+		if err = msg.Unpack(payload); err != nil {
 			return err
 		}
 
 		field = msg.GetFields()
 
-		parseMap = parse.ParseBeautify(field, consumed)
+		parseOrdMap = parse.ParseBeautify(field, consumed)
 
-		parseOrderedMap = append(parseOrderedMap, parseMap)
+		iso.FileDataParsed = append(iso.FileDataParsed, parseOrdMap)
 
 	}
 
-	iso.FileDataParse = parseOrderedMap
+	iso.ParsedLines = len(iso.FileDataParsed)
 
 	return nil
 

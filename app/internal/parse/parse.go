@@ -38,16 +38,16 @@ func parseDE048(raw string) *orderedmap.OrderedMap {
 func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 
 	var (
-		fieldBitPrimary   []int                  = make([]int, 0, 64)
-		fieldBitSecundary []int                  = make([]int, 0, 64)
+		fieldBitPrimary   []int                  = make([]int, 0, 65)
+		fieldBitSecundary []int                  = make([]int, 0, 65)
 		keys              []int                  = make([]int, 0, len(raw))
-		parse             *orderedmap.OrderedMap = orderedmap.New()
-		dataElement       map[int]string         = make(map[int]string, 128)
+		parseOrdMap       *orderedmap.OrderedMap = orderedmap.New()
+		dataElement       map[int]string         = make(map[int]string, 129)
 		de048, values     string
-		field             field.Field
+		parseField        field.Field
 		id                int
 		err               error
-		parseSet          func(key string, value any) = parse.Set
+		parseSet          func(key string, value any) = parseOrdMap.Set
 	)
 
 	for id = range raw {
@@ -72,9 +72,9 @@ func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 
 	for _, id = range keys {
 
-		field, _ = raw[id]
+		parseField, _ = raw[id]
 
-		values, err = field.String()
+		values, err = parseField.String()
 
 		if err != nil {
 			continue
@@ -110,6 +110,6 @@ func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 
 	parseSet("Length", lenRaw)
 
-	return parse
+	return parseOrdMap
 
 }

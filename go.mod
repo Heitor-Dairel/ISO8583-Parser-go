@@ -6,6 +6,7 @@ require (
 	github.com/bytedance/sonic v1.15.2
 	github.com/iancoleman/orderedmap v0.3.0
 	github.com/moov-io/iso8583 v0.26.0
+	golang.org/x/sync v0.20.0
 )
 
 require (

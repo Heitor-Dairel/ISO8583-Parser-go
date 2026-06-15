@@ -10,6 +10,7 @@ type (
 		FilePath      types.File
 		FileName      types.File
 		FileExt       types.File
+		FileSize      types.Size
 		PathOutput    types.Path
 		PathOutputTxt types.Path
 		PathOutputCsv types.Path

@@ -15,19 +15,15 @@ import (
 	"github.com/iancoleman/orderedmap"
 )
 
-func (log *Log) LoggingIso() error {
+func (log *LogIso) LoggingIso() error {
 
 	var err error
 
-	err = log.logTxt()
-
-	if err != nil {
+	if err = log.logTxt(); err != nil {
 		return err
 	}
 
-	err = log.logCsv()
-
-	if err != nil {
+	if err = log.logCsv(); err != nil {
 		return err
 	}
 
@@ -35,17 +31,17 @@ func (log *Log) LoggingIso() error {
 
 }
 
-func getDataCsv(keys []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterDataCsv) {
+func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterDataCsv) {
 
 	var (
-		headerCache     map[string]bool     = make(map[string]bool)
+		headerCache     map[string]bool     = make(map[string]bool, 1500)
 		headerException map[string]bool     = map[string]bool{"BMP": true, "BMS": true, "Length": true, "PDS": true}
 		order           map[string]int      = map[string]int{"ID": 0, "MTI": 1}
 		header          types.HeaderCsv     = types.HeaderCsv{"ID"}
-		dataCsv         types.OuterDataCsv  = make(types.OuterDataCsv, 0, 7000)
-		subDataCsv      types.NestedDataCsv = make(types.NestedDataCsv, 0, 1000)
+		dataCsv         types.OuterDataCsv  = make(types.OuterDataCsv, 0, len(dataParsed))
+		subDataCsv      types.NestedDataCsv = make(types.NestedDataCsv, 0, 2000)
 		row, subRow     *orderedmap.OrderedMap
-		key, valueCurr  string
+		key, value      string
 		mti, pds        any
 		isMatch         bool
 		id              int = 1
@@ -59,9 +55,8 @@ func getDataCsv(keys []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterData
 		return ""
 	}
 
-	for i := 0; i < len(keys); i++ {
+	for _, row = range dataParsed {
 
-		row = keys[i]
 		mti, _ = row.Get("MTI")
 		pds, isMatch = row.Get("PDS")
 
@@ -105,9 +100,7 @@ func getDataCsv(keys []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterData
 
 	})
 
-	for i := 0; i < len(keys); i++ {
-
-		row = keys[i]
+	for _, row = range dataParsed {
 
 		mti, _ = row.Get("MTI")
 
@@ -123,22 +116,22 @@ func getDataCsv(keys []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterData
 
 				if !strings.Contains(key, "PDS") && !strings.Contains(key, "ID") {
 
-					valueCurr = getOrEmpty(row.Get(key))
-					subDataCsv = append(subDataCsv, valueCurr)
+					value = getOrEmpty(row.Get(key))
+					subDataCsv = append(subDataCsv, value)
 
 				}
 
 				if strings.Contains(key, "PDS") {
 
-					valueCurr = getOrEmpty(subRow.Get(key))
-					subDataCsv = append(subDataCsv, valueCurr)
+					value = getOrEmpty(subRow.Get(key))
+					subDataCsv = append(subDataCsv, value)
 
 				}
 			}
 
 			dataCsv = append(dataCsv, subDataCsv)
 
-			subDataCsv = types.NestedDataCsv{}
+			subDataCsv = make(types.NestedDataCsv, 0, 2000)
 
 			id++
 
@@ -150,7 +143,7 @@ func getDataCsv(keys []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterData
 
 }
 
-func (lg *Log) logCsv() error {
+func (log *LogIso) logCsv() error {
 
 	const errorMsg string = `Erro ao criar arquivo csv: %w`
 	var (
@@ -158,13 +151,13 @@ func (lg *Log) logCsv() error {
 		dataCsv types.OuterDataCsv
 		file    *os.File
 		writer  *csv.Writer
-		val     []string
+		value   []string
 		err     error
 	)
 
-	header, dataCsv = getDataCsv(lg.FileDataParse)
+	header, dataCsv = getDataCsv(log.FileDataParsed)
 
-	file, err = os.Create(lg.PathCsv)
+	file, err = os.Create(log.PathOutputCsv)
 
 	if err != nil {
 		return fmt.Errorf(errorMsg, err)
@@ -178,16 +171,16 @@ func (lg *Log) logCsv() error {
 
 	writer.Write(header)
 
-	for _, val = range dataCsv {
+	for _, value = range dataCsv {
 
-		writer.Write(val)
+		writer.Write(value)
 
 	}
 
 	return nil
 
 }
-func (lg *Log) logTxt() error {
+func (log *LogIso) logTxt() error {
 
 	const errorMsg string = `Erro ao criar arquivo txt: %w`
 	var (
@@ -195,11 +188,9 @@ func (lg *Log) logTxt() error {
 		err   error
 	)
 
-	bytes, _ = sonic.MarshalIndent(lg.FileDataParse, "", "\t")
+	bytes, _ = sonic.MarshalIndent(log.FileDataParsed, "", "\t")
 
-	err = os.WriteFile(lg.PathTxt, bytes, 0644)
-
-	if err != nil {
+	if err = os.WriteFile(log.PathOutputTxt, bytes, 0644); err != nil {
 		return fmt.Errorf(errorMsg, err)
 	}
 

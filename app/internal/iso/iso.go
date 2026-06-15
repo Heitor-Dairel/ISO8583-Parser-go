@@ -51,8 +51,8 @@ func ParseMastercardIso(files ...string) {
 func parseIso(fileDate, fileCycle types.File) error {
 
 	var err error
-	var logger *logs.LogIso
-	var iso *ISO8583 = &ISO8583{FilePathIso: *fpi, FileDataParsed: make(types.Parse, 0, 6000)}
+	var logger logs.LogIso
+	var iso ISO8583 = ISO8583{FilePathIso: *fpi, FileDataParsed: make(types.Parse, 0, 6000)}
 	var valid helpers.Validate = helpers.Validate{FileDate: fileDate, FileCycle: fileCycle}
 
 	if err = valid.ValidateFileInfoIso(); err != nil {
@@ -73,7 +73,7 @@ func parseIso(fileDate, fileCycle types.File) error {
 		return err
 	}
 
-	logger = &logs.LogIso{
+	logger = logs.LogIso{
 		FileDataParsed: iso.FileDataParsed,
 		PathOutputTxt:  iso.FilePathIso.PathOutputTxt,
 		PathOutputCsv:  iso.FilePathIso.PathOutputCsv,

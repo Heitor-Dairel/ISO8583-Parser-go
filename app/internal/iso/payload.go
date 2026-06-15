@@ -50,7 +50,7 @@ func (iso *ISO8583) fileIsoPayload() error {
 	var (
 		index, consumed int
 		lenRaw          int        = len(iso.FilePathIso.FileData)
-		payload         types.Data = make(types.Data, 0, 5000)
+		payload         types.Data = make(types.Data, 0, 10000)
 		msg             *iso8583.Message
 		field           map[int]field.Field = make(map[int]field.Field, 129)
 		parseOrdMap     *orderedmap.OrderedMap

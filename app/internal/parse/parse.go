@@ -2,6 +2,7 @@ package parse
 
 import (
 	"fmt"
+	"log"
 	"slices"
 	"strconv"
 
@@ -10,26 +11,31 @@ import (
 )
 
 func parseDE048(raw string) *orderedmap.OrderedMap {
-	const lenTagField, lenPdsField int = 4, 7
+
+	const (
+		lenTagField, lenPdsField int    = 4, 7
+		errorMsg                 string = `Erro ao criar os PDS do data element DE048.`
+	)
+
 	var (
 		lenRaw                       int = len(raw)
 		tag, value                   string
-		lenPds, ptrParse, start, end int
+		lenPds, sepParse, start, end int
 		err                          error
 		pds048                       *orderedmap.OrderedMap = orderedmap.New()
 	)
 
-	for ptrParse < lenRaw {
-		tag = fmt.Sprintf("PDS%s", raw[ptrParse:ptrParse+lenTagField])
-		lenPds, err = strconv.Atoi(raw[ptrParse+lenTagField : ptrParse+lenPdsField])
+	for sepParse < lenRaw {
+		tag = fmt.Sprintf("PDS%s", raw[sepParse:sepParse+lenTagField])
+		lenPds, err = strconv.Atoi(raw[sepParse+lenTagField : sepParse+lenPdsField])
 		if err != nil {
-			break
+			log.Fatalln(errorMsg)
 		}
-		start = ptrParse + lenPdsField
-		end = ptrParse + lenPdsField + lenPds
+		start = sepParse + lenPdsField
+		end = sepParse + lenPdsField + lenPds
 		value = raw[start:end]
 		pds048.Set(tag, value)
-		ptrParse = end
+		sepParse = end
 	}
 	return pds048
 

@@ -3,7 +3,9 @@ package iso
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/exception"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/filepathiso"
@@ -13,10 +15,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var fpi *filepathiso.FilePathIso = &filepathiso.FilePathIso{}
+var filePathIso filepathiso.FilePathIso = filepathiso.FilePathIso{}
 
 func NewParse() {
-	if err := fpi.GetPathOutput(); err != nil {
+	if err := filePathIso.GetPathOutput(); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -52,7 +54,7 @@ func parseIso(fileDate, fileCycle types.File) error {
 
 	var err error
 	var logger logs.LogIso
-	var iso ISO8583 = ISO8583{FilePathIso: *fpi, FileDataParsed: make(types.Parse, 0, 6000)}
+	var iso ISO8583 = ISO8583{FilePathIso: filePathIso, FileDataParsed: make(types.Parse, 0, 6000)}
 	var valid helpers.Validate = helpers.Validate{FileDate: fileDate, FileCycle: fileCycle}
 
 	if err = valid.ValidateFileInfoIso(); err != nil {
@@ -61,12 +63,12 @@ func parseIso(fileDate, fileCycle types.File) error {
 
 	err = iso.FilePathIso.GetFile(fileDate, fileCycle)
 
-	if err != nil && !errors.Is(err, exception.ErrFileNotFound) {
-		return err
-	}
-
 	if err != nil && errors.Is(err, exception.ErrFileNotFound) {
 		return nil
+	}
+
+	if err != nil && !errors.Is(err, exception.ErrFileNotFound) {
+		return err
 	}
 
 	if err = iso.fileIsoPayload(); err != nil {
@@ -74,9 +76,11 @@ func parseIso(fileDate, fileCycle types.File) error {
 	}
 
 	logger = logs.LogIso{
+		FileDate:       fileDate,
+		FileCycle:      fileCycle,
 		FileDataParsed: iso.FileDataParsed,
-		PathOutputTxt:  iso.FilePathIso.PathOutputTxt,
-		PathOutputCsv:  iso.FilePathIso.PathOutputCsv,
+		PathOutputTxt:  filepath.Join(iso.FilePathIso.PathOutput, fmt.Sprintf("%s.TXT.LOG", iso.FilePathIso.FileName)),
+		PathOutputCsv:  filepath.Join(iso.FilePathIso.PathOutput, fmt.Sprintf("%s.CSV", iso.FilePathIso.FileName)),
 	}
 
 	if err = logger.LoggingIso(); err != nil {

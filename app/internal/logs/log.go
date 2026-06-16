@@ -145,7 +145,7 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 
 func (log *LogIso) logCsv() error {
 
-	const errorMsg string = `Erro ao criar arquivo csv: %w`
+	const errorMsg string = `Erro ao criar csv para a data '%s' e ciclo '%s' : %w.`
 	var (
 		header  types.HeaderCsv
 		dataCsv types.OuterDataCsv
@@ -157,10 +157,8 @@ func (log *LogIso) logCsv() error {
 
 	header, dataCsv = getDataCsv(log.FileDataParsed)
 
-	file, err = os.Create(log.PathOutputCsv)
-
-	if err != nil {
-		return fmt.Errorf(errorMsg, err)
+	if file, err = os.Create(log.PathOutputCsv); err != nil {
+		return fmt.Errorf(errorMsg, log.FileDate, log.FileCycle, err)
 	}
 
 	defer file.Close()
@@ -182,7 +180,7 @@ func (log *LogIso) logCsv() error {
 }
 func (log *LogIso) logTxt() error {
 
-	const errorMsg string = `Erro ao criar arquivo txt: %w`
+	const errorMsg string = `Erro ao criar txt para a data '%s' e ciclo '%s' : %w.`
 	var (
 		bytes types.Data
 		err   error
@@ -191,7 +189,7 @@ func (log *LogIso) logTxt() error {
 	bytes, _ = sonic.MarshalIndent(log.FileDataParsed, "", "\t")
 
 	if err = os.WriteFile(log.PathOutputTxt, bytes, 0644); err != nil {
-		return fmt.Errorf(errorMsg, err)
+		return fmt.Errorf(errorMsg, log.FileDate, log.FileCycle, err)
 	}
 
 	return nil

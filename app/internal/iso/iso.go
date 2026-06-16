@@ -17,7 +17,9 @@ import (
 
 var filePathIso filepathiso.FilePathIso = filepathiso.FilePathIso{}
 
-func NewParse() {
+func NewParse(pathIso types.Path) {
+
+	filePathIso.PathIso = pathIso
 	if err := filePathIso.GetPathOutput(); err != nil {
 		log.Fatal(err)
 	}

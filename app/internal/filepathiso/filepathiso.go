@@ -33,7 +33,6 @@ func (fp *FilePathIso) GetFile(fileDate, fileCycle types.File) error {
 func (fp *FilePathIso) walkFileIso(fileDate, fileCycle types.File) error {
 
 	const (
-		pathIsoFiles         string = `C:\Users\heitor.tavares\OneDrive - TRIVALE ADMINISTRACAO LTDA\Operação Processadora - Arquivos CSU`
 		errorMsgDir          string = `Erro ao percorrer diretório '%s' : %w.`
 		errorMsgFile         string = `Arquivo não encontrado para data '%s' e ciclo '%s' : %w.`
 		errorMsgFileNotFound string = `Arquivo não encontrado para data '%s' e ciclo '%s'.`
@@ -72,8 +71,8 @@ func (fp *FilePathIso) walkFileIso(fileDate, fileCycle types.File) error {
 		return nil
 	}
 
-	if errWalk = filepath.WalkDir(pathIsoFiles, funcWalkIsoDir); errWalk != nil {
-		return fmt.Errorf(errorMsgDir, pathIsoFiles, errWalk)
+	if errWalk = filepath.WalkDir(fp.PathIso, funcWalkIsoDir); errWalk != nil {
+		return fmt.Errorf(errorMsgDir, fp.PathIso, errWalk)
 	}
 
 	if !fileCollected {

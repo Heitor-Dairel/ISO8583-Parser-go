@@ -11,4 +11,5 @@ type FilePathIso struct {
 	FileExt    types.File
 	FileSize   types.Size
 	PathOutput types.Path
+	PathIso    types.Path
 }

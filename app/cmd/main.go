@@ -6,7 +6,7 @@ import (
 
 func main() {
 
-	iso.NewParse()
+	iso.NewParse(`C:\Users\heitor.tavares\OneDrive - TRIVALE ADMINISTRACAO LTDA\Operação Processadora - Arquivos CSU`)
 
 	iso.ParseISO85831993("26/05/2025", "CIC1", "26/05/2025", "CIC2", "26/05/2025", "CIC3")
 

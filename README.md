@@ -1,9 +1,8 @@
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard Logo" width="500">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard Logo" width="400">
+  <br>
+  <br>
 </p>
-
-<br>
-<br>
 
 # 💳 Mastercard ISO8583-1993 Parser (Go)
 Parser developed in **Go** for reading and interpreting messages in the **ISO8583-1993** standard, with a focus on **IPM (Interchange File)** files from Mastercard.
@@ -12,7 +11,6 @@ Parser developed in **Go** for reading and interpreting messages in the **ISO858
 ## 📌 About the Project
 This project parses ISO8583 messages found in Mastercard IPM files, converting raw data into organized structures and exporting the results to **CSV** and **JSON**.
 It was developed to facilitate analyses, reconciliations, and integrations with financial systems that use the ISO8583-1993 standard in **EBCDIC (CP500)** encoding.
-
 
 ## ⚙️ Features
 - Reading of Mastercard IPM files in binary EBCDIC format
@@ -29,7 +27,6 @@ It was developed to facilitate analyses, reconciliations, and integrations with 
 - Export to **CSV** (semicolon delimiter `;`) and ordered **JSON**
 - Custom CSV headers with sorting (`ID` and `MTI` always first)
 
-
 ## 🧠 How It Works
 The parser performs the following steps for each message:
 1. Decodes the file from **EBCDIC to ASCII**
@@ -39,7 +36,6 @@ The parser performs the following steps for each message:
 5. Applies specific parsers for **DE048** and **DE055**
 6. Serializes the result to **CSV** and **JSON**
 
-
 ## 🛠️ Technologies Used
 - **Go 1.22+**
 - [`github.com/moov-io/iso8583`](https://github.com/moov-io/iso8583) — Main Parser
@@ -47,10 +43,8 @@ The parser performs the following steps for each message:
 - [`github.com/bytedance/sonic`](https://github.com/bytedance/sonic) — High-performance JSON serialization
 - `encoding/csv` — CSV Generation
 
-
 ## 📄 License
 This project is licensed under the [MIT](LICENSE) license.
-
 
 ## 👨🏻‍💻 Author
 Developed by **Heitor Dairel**  

@@ -114,8 +114,7 @@ func (fp *FilePathIso) readFileIso() error {
 func (fp *FilePathIso) GetPathOutput() error {
 	const (
 		outputDir         string = "output"
-		errorMsgExe       string = `Erro ao encontrar o caminho absoluto do executável : %w.`
-		errorMsgRemove    string = `Erro ao remover diretório '%s' : %w.`
+		errorMsgExe       string = `Erro ao encontrar o diretório do executável : %w.`
 		errorMsgCreateDir string = `Erro ao criar diretório '%s' : %w.`
 	)
 	var (
@@ -129,12 +128,25 @@ func (fp *FilePathIso) GetPathOutput() error {
 
 	fp.PathOutput = filepath.Join(filepath.Dir(exe), outputDir)
 
-	if err = os.RemoveAll(fp.PathOutput); err != nil && !errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf(errorMsgRemove, fp.PathOutput, err)
+	if err = fp.removePathOutput(); err != nil {
+		return err
 	}
 
 	if err = os.MkdirAll(fp.PathOutput, 0755); err != nil {
 		return fmt.Errorf(errorMsgCreateDir, fp.PathOutput, err)
+	}
+
+	return nil
+}
+
+func (fp *FilePathIso) removePathOutput() error {
+
+	const errorMsgRemove string = `Erro ao remover diretório '%s' : %w.`
+
+	var err error
+
+	if err = os.RemoveAll(fp.PathOutput); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf(errorMsgRemove, fp.PathOutput, err)
 	}
 
 	return nil

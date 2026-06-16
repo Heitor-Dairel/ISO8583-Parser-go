@@ -8,6 +8,6 @@ func main() {
 
 	iso.NewParse()
 
-	iso.ParseMastercardIso("26/05/2025", "CIC1", "26/05/2025", "CIC2", "26/05/2025", "CIC3")
+	iso.ParseISO85831993("26/05/2025", "CIC1", "26/05/2025", "CIC2", "26/05/2025", "CIC3")
 
 }

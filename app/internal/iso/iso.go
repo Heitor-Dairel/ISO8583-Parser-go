@@ -23,7 +23,7 @@ func NewParse() {
 	}
 }
 
-func ParseMastercardIso(files ...string) {
+func ParseISO85831993(files ...string) {
 
 	var err error
 	var errg *errgroup.Group
@@ -34,7 +34,7 @@ func ParseMastercardIso(files ...string) {
 
 		errg.Go(func() error {
 
-			return parseIso(files[i], files[i+1])
+			return processorIso(files[i], files[i+1])
 
 		})
 
@@ -50,7 +50,7 @@ func ParseMastercardIso(files ...string) {
 
 }
 
-func parseIso(fileDate, fileCycle types.File) error {
+func processorIso(fileDate, fileCycle types.File) error {
 
 	var err error
 	var logger logs.LogIso

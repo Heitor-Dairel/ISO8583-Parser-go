@@ -34,18 +34,18 @@ func (log *LogIso) LoggingIso() error {
 func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.OuterDataCsv) {
 
 	var (
-		headerCache     map[string]bool     = make(map[string]bool, 1500)
-		headerException map[string]bool     = map[string]bool{"BMP": true, "BMS": true, "Length": true, "PDS": true}
-		order           map[string]int      = map[string]int{"ID": 0, "MTI": 1}
-		header          types.HeaderCsv     = types.HeaderCsv{"ID"}
-		dataCsv         types.OuterDataCsv  = make(types.OuterDataCsv, 0, len(dataParsed))
-		subDataCsv      types.NestedDataCsv = make(types.NestedDataCsv, 0, 2000)
-		row, subRow     *orderedmap.OrderedMap
-		key, value      string
-		mti, pds        any
-		isMatch         bool
-		id              int = 1
-		getOrEmpty      func(values any, isExist bool) string
+		headerCache                 map[string]bool     = make(map[string]bool, 1500)
+		headerException             map[string]bool     = map[string]bool{"BMP": true, "BMS": true, "Length": true, "PDS": true}
+		order                       map[string]int      = map[string]int{"ID": 0, "MTI": 1}
+		header                      types.HeaderCsv     = types.HeaderCsv{"ID"}
+		rows                        types.OuterDataCsv  = make(types.OuterDataCsv, 0, len(dataParsed))
+		subRows                     types.NestedDataCsv = make(types.NestedDataCsv, 0, 2000)
+		dataElement, subDataElement *orderedmap.OrderedMap
+		key, value                  string
+		mti, pds                    any
+		isMatch                     bool
+		id                          int = 1
+		getOrEmpty                  func(values any, isExist bool) string
 	)
 
 	getOrEmpty = func(values any, isExist bool) string {
@@ -55,13 +55,13 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 		return ""
 	}
 
-	for _, row = range dataParsed {
+	for _, dataElement = range dataParsed {
 
-		mti, _ = row.Get("MTI")
-		pds, isMatch = row.Get("PDS")
+		mti, _ = dataElement.Get("MTI")
+		pds, isMatch = dataElement.Get("PDS")
 
 		if mti == "1240" {
-			for _, key = range row.Keys() {
+			for _, key = range dataElement.Keys() {
 				if !headerCache[key] && !headerException[key] {
 					headerCache[key] = true
 					header = append(header, key)
@@ -69,8 +69,8 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 			}
 
 			if isMatch {
-				subRow = pds.(*orderedmap.OrderedMap)
-				for _, key = range subRow.Keys() {
+				subDataElement = pds.(*orderedmap.OrderedMap)
+				for _, key = range subDataElement.Keys() {
 					if !headerCache[key] && !headerException[key] {
 						headerCache[key] = true
 						header = append(header, key)
@@ -100,38 +100,38 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 
 	})
 
-	for _, row = range dataParsed {
+	for _, dataElement = range dataParsed {
 
-		mti, _ = row.Get("MTI")
+		mti, _ = dataElement.Get("MTI")
 
 		if mti == "1240" {
 
-			subDataCsv = append(subDataCsv, strconv.Itoa(id))
+			subRows = append(subRows, strconv.Itoa(id))
 
-			pds, _ = row.Get("PDS")
+			pds, _ = dataElement.Get("PDS")
 
-			subRow = pds.(*orderedmap.OrderedMap)
+			subDataElement = pds.(*orderedmap.OrderedMap)
 
 			for _, key = range header {
 
 				if !strings.Contains(key, "PDS") && !strings.Contains(key, "ID") {
 
-					value = getOrEmpty(row.Get(key))
-					subDataCsv = append(subDataCsv, value)
+					value = getOrEmpty(dataElement.Get(key))
+					subRows = append(subRows, value)
 
 				}
 
 				if strings.Contains(key, "PDS") {
 
-					value = getOrEmpty(subRow.Get(key))
-					subDataCsv = append(subDataCsv, value)
+					value = getOrEmpty(subDataElement.Get(key))
+					subRows = append(subRows, value)
 
 				}
 			}
 
-			dataCsv = append(dataCsv, subDataCsv)
+			rows = append(rows, subRows)
 
-			subDataCsv = make(types.NestedDataCsv, 0, 2000)
+			subRows = make(types.NestedDataCsv, 0, 2000)
 
 			id++
 
@@ -139,7 +139,7 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 
 	}
 
-	return header, dataCsv
+	return header, rows
 
 }
 
@@ -147,15 +147,15 @@ func (log *LogIso) logCsv() error {
 
 	const errorMsg string = `Erro ao criar csv para a data '%s' e ciclo '%s' : %w.`
 	var (
-		header  types.HeaderCsv
-		dataCsv types.OuterDataCsv
-		file    *os.File
-		writer  *csv.Writer
-		value   []string
-		err     error
+		header types.HeaderCsv
+		rows   types.OuterDataCsv
+		file   *os.File
+		writer *csv.Writer
+		value  []string
+		err    error
 	)
 
-	header, dataCsv = getDataCsv(log.FileDataParsed)
+	header, rows = getDataCsv(log.FileDataParsed)
 
 	if file, err = os.Create(log.PathOutputCsv); err != nil {
 		return fmt.Errorf(errorMsg, log.FileDate, log.FileCycle, err)
@@ -169,7 +169,7 @@ func (log *LogIso) logCsv() error {
 
 	writer.Write(header)
 
-	for _, value = range dataCsv {
+	for _, value = range rows {
 
 		writer.Write(value)
 

@@ -63,7 +63,9 @@ func (fp *FilePathIso) walkFileIso(fileDate, fileCycle types.File) error {
 			ext = filepath.Ext(fileNameComplete)
 			name = strings.TrimSuffix(fileNameComplete, ext)
 
-			fp.FilePath, fp.FileName, fp.FileExt, fileCollected = path, name, ext, true
+			fp.FilePath, fp.FileName, fp.FileExt, fp.FileFullName, fileCollected = path, name, ext, fileNameComplete, true
+
+			fp.FileDateTime = helpers.FormatDateTime(name)
 
 			return filepath.SkipAll
 		}
@@ -101,7 +103,7 @@ func (fp *FilePathIso) readFileIso() error {
 		return fmt.Errorf(errorMsgSize, fp.FilePath, err)
 	}
 
-	fp.FileSize = info.Size()
+	fp.FileSize = helpers.FormatSize(info.Size())
 
 	if fp.FileData, err = os.ReadFile(fp.FilePath); err != nil {
 		return fmt.Errorf(errorMsgRead, fp.FilePath, err)

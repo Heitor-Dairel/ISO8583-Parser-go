@@ -5,11 +5,13 @@ import (
 )
 
 type FilePathIso struct {
-	FileData   types.Data
-	FilePath   types.File
-	FileName   types.File
-	FileExt    types.File
-	FileSize   types.Size
-	PathOutput types.Path
-	PathIso    types.Path
+	FileData     types.Data
+	FilePath     types.File
+	FileName     types.File
+	FileFullName types.File
+	FileExt      types.File
+	FileSize     types.Size
+	FileDateTime types.File
+	PathOutput   types.Path
+	PathIso      types.Path
 }

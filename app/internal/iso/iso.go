@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"time"
 
+	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/custom"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/exception"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/filepathiso"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/helpers"
@@ -23,6 +25,8 @@ func NewParse(pathIso types.Path) {
 	if err := filePathIso.GetPathOutput(); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(types.Title)
 }
 
 func ParseISO85831993(files ...string) {
@@ -54,10 +58,14 @@ func ParseISO85831993(files ...string) {
 
 func processorIso(fileDate, fileCycle types.File) error {
 
-	var err error
-	var logger logs.LogIso
-	var iso ISO8583 = ISO8583{FilePathIso: filePathIso, FileDataParsed: make(types.Parse, 0, 6000)}
-	var valid helpers.Validate = helpers.Validate{FileDate: fileDate, FileCycle: fileCycle}
+	var (
+		start     time.Time = time.Now()
+		err       error
+		logger    logs.LogIso
+		iso       ISO8583          = ISO8583{FilePathIso: filePathIso, FileDataParsed: make(types.Parse, 0, 6000)}
+		valid     helpers.Validate = helpers.Validate{FileDate: fileDate, FileCycle: fileCycle}
+		customIso custom.CustomIso
+	)
 
 	if err = valid.ValidateFileInfoIso(); err != nil {
 		return err
@@ -88,6 +96,17 @@ func processorIso(fileDate, fileCycle types.File) error {
 	if err = logger.LoggingIso(); err != nil {
 		return err
 	}
+
+	customIso = custom.CustomIso{
+		FileName: iso.FilePathIso.FileFullName,
+		Cycle:    fileCycle,
+		Date:     iso.FilePathIso.FileDateTime,
+		Lines:    iso.ParsedLines,
+		Size:     iso.FilePathIso.FileSize,
+		Elapsed:  time.Since(start),
+	}
+
+	customIso.PrintLog()
 
 	return nil
 

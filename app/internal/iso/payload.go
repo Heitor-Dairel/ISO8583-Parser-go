@@ -3,6 +3,7 @@ package iso
 import (
 	"fmt"
 
+	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/helpers"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/parse"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/speac"
 	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/types"
@@ -52,12 +53,12 @@ func (iso *ISO8583) fileIsoPayload() error {
 	const errorMsgUnpackIso string = `Erro ao realizar parse na linha '%d' : %w.`
 
 	var (
-		index, consumed int
-		lenRaw          int = len(iso.FilePathIso.FileData)
-		payload         types.Data
-		msg             *iso8583.Message
-		parseOrdMap     *orderedmap.OrderedMap
-		err             error
+		index, consumed, msgCount int
+		lenRaw                    int = len(iso.FilePathIso.FileData)
+		payload                   types.Data
+		msg                       *iso8583.Message
+		parseOrdMap               *orderedmap.OrderedMap
+		err                       error
 	)
 
 	for index < lenRaw {
@@ -69,16 +70,18 @@ func (iso *ISO8583) fileIsoPayload() error {
 		msg = iso8583.NewMessage(speac.Iso85831993V1)
 
 		if err = msg.Unpack(payload); err != nil {
-			return fmt.Errorf(errorMsgUnpackIso, iso.ParsedLines, err)
+			return fmt.Errorf(errorMsgUnpackIso, msgCount, err)
 		}
 
 		parseOrdMap = parse.ParseBeautify(msg.GetFields(), consumed)
 
 		iso.FileDataParsed = append(iso.FileDataParsed, parseOrdMap)
 
-		iso.ParsedLines++
+		msgCount++
 
 	}
+
+	iso.ParsedLines = helpers.FormatLines(msgCount)
 
 	return nil
 

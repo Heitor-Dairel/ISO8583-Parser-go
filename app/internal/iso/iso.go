@@ -25,8 +25,6 @@ func NewParse(pathIso types.Path) {
 	if err := filePathIso.GetPathOutput(); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(types.Title)
 }
 
 func ParseISO85831993(files ...string) {

@@ -68,6 +68,7 @@ MANIFEST
 wheels/
 pip-wheel-metadata/
 *.egg-info/
+*.ps1
  
 # *===========================================
 # *Jupyter Notebooks

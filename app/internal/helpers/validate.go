@@ -6,6 +6,7 @@ import (
 )
 
 func (vld *Validate) ValidateFileInfoIso() error {
+
 	const (
 		cycle1        string = "CIC1"
 		cycle2        string = "CIC2"

@@ -1,6 +1,13 @@
 package logs
 
-import "github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/types"
+import (
+	"log"
+	"os"
+
+	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/types"
+)
+
+var Loggers = log.New(os.Stdout, "\033[91m[ERROR] \033[0m", log.Ldate|log.Ltime)
 
 type LogIso struct {
 	FileDate       types.File

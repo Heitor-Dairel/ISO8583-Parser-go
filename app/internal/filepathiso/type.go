@@ -12,6 +12,7 @@ type FilePathIso struct {
 	FileExt      types.File
 	FileSize     types.Size
 	FileDateTime types.File
+	PathAbs      types.Path
 	PathOutput   types.Path
 	PathIso      types.Path
 }

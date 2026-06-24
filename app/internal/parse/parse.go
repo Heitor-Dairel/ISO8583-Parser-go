@@ -14,7 +14,7 @@ func parseDE048(raw string) *orderedmap.OrderedMap {
 
 	const (
 		lenTagField, lenPdsField int    = 4, 7
-		errorMsg                 string = `Erro ao criar os PDS do data element DE048.`
+		errorMsg                 string = "Erro ao criar os PDS do data element DE048."
 	)
 
 	var (

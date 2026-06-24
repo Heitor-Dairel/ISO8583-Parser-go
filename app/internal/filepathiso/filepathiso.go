@@ -30,12 +30,66 @@ func (fp *FilePathIso) GetFile(fileDate, fileCycle types.File) error {
 
 }
 
+func (fp *FilePathIso) GetPathOutput() error {
+
+	const (
+		outputDir         string = "output"
+		errorMsgCreateDir string = "Erro ao criar diretório '%s' : %w."
+	)
+
+	var err error
+
+	fp.PathOutput = filepath.Join(fp.PathAbs, outputDir)
+
+	if err = fp.removePathOutput(); err != nil {
+		return err
+	}
+
+	if err = os.MkdirAll(fp.PathOutput, 0755); err != nil {
+		return fmt.Errorf(errorMsgCreateDir, fp.PathOutput, err)
+	}
+
+	return nil
+}
+
+func (fp *FilePathIso) GetPathAbs() error {
+
+	const errorMsgExe string = "Erro ao encontrar o diretório do executável : %w."
+
+	var (
+		exe string
+		err error
+	)
+
+	if exe, err = os.Executable(); err != nil {
+		return fmt.Errorf(errorMsgExe, err)
+	}
+
+	fp.PathAbs = filepath.Dir(exe)
+
+	return nil
+
+}
+
+func (fp *FilePathIso) PathIsoExist() error {
+
+	const errMsgExistDir = "Diretório '%s' não encontrado"
+	var err error
+
+	if _, err = os.Stat(fp.PathIso); err != nil {
+		return fmt.Errorf(errMsgExistDir, fp.PathIso)
+	}
+
+	return nil
+
+}
+
 func (fp *FilePathIso) walkFileIso(fileDate, fileCycle types.File) error {
 
 	const (
-		errorMsgDir          string = `Erro ao percorrer diretório '%s' : %w.`
-		errorMsgFile         string = `Arquivo não encontrado para data '%s' e ciclo '%s' : %w.`
-		errorMsgFileNotFound string = `Arquivo não encontrado para data '%s' e ciclo '%s'.`
+		errorMsgDir          string = "Erro ao percorrer diretório '%s' : %w."
+		errorMsgFile         string = "Arquivo não encontrado para data '%s' e ciclo '%s' : %w."
+		errorMsgFileNotFound string = "Arquivo não encontrado para data '%s' e ciclo '%s'."
 	)
 
 	var (
@@ -90,8 +144,8 @@ func (fp *FilePathIso) walkFileIso(fileDate, fileCycle types.File) error {
 
 func (fp *FilePathIso) readFileIso() error {
 	const (
-		errorMsgRead string = `Erro ao ler arquivo '%s' : %w.`
-		errorMsgSize string = `Erro ao obter o tamanho do arquivo '%s' : %w.`
+		errorMsgRead string = "Erro ao ler arquivo '%s' : %w."
+		errorMsgSize string = "Erro ao obter o tamanho do arquivo '%s' : %w."
 	)
 
 	var (
@@ -112,37 +166,9 @@ func (fp *FilePathIso) readFileIso() error {
 	return nil
 }
 
-func (fp *FilePathIso) GetPathOutput() error {
-	const (
-		outputDir         string = "output"
-		errorMsgExe       string = `Erro ao encontrar o diretório do executável : %w.`
-		errorMsgCreateDir string = `Erro ao criar diretório '%s' : %w.`
-	)
-	var (
-		exe string
-		err error
-	)
-
-	if exe, err = os.Executable(); err != nil {
-		return fmt.Errorf(errorMsgExe, err)
-	}
-
-	fp.PathOutput = filepath.Join(filepath.Dir(exe), outputDir)
-
-	if err = fp.removePathOutput(); err != nil {
-		return err
-	}
-
-	if err = os.MkdirAll(fp.PathOutput, 0755); err != nil {
-		return fmt.Errorf(errorMsgCreateDir, fp.PathOutput, err)
-	}
-
-	return nil
-}
-
 func (fp *FilePathIso) removePathOutput() error {
 
-	const errorMsgRemove string = `Erro ao remover diretório '%s' : %w.`
+	const errorMsgRemove string = "Erro ao remover diretório '%s' : %w."
 
 	var err error
 

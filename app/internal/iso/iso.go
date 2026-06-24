@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"path/filepath"
 	"time"
 
@@ -21,10 +20,24 @@ var filePathIso filepathiso.FilePathIso = filepathiso.FilePathIso{}
 
 func NewParse(pathIso types.Path) {
 
+	var err error
+
 	filePathIso.PathIso = pathIso
-	if err := filePathIso.GetPathOutput(); err != nil {
-		log.Fatal(err)
+
+	if err = filePathIso.PathIsoExist(); err != nil {
+		logs.Loggers.Fatal(err)
 	}
+
+	if err = filePathIso.GetPathAbs(); err != nil {
+		logs.Loggers.Fatal(err)
+	}
+
+	if err = filePathIso.GetPathOutput(); err != nil {
+		logs.Loggers.Fatal(err)
+	}
+
+	custom.PrintLogEntry()
+
 }
 
 func ParseISO85831993(files ...string) {
@@ -45,11 +58,11 @@ func ParseISO85831993(files ...string) {
 	}
 
 	if err = errg.Wait(); err != nil {
-		log.Println(err)
+		logs.Loggers.Println(err)
 	}
 
 	if len(filepathiso.FilesNotFound) != 0 {
-		log.Println(filepathiso.FilesNotFound)
+		logs.Loggers.Println(filepathiso.FilesNotFound)
 	}
 
 }
@@ -104,7 +117,7 @@ func processorIso(fileDate, fileCycle types.File) error {
 		Elapsed:  time.Since(start),
 	}
 
-	customIso.PrintLog()
+	customIso.PrintLogExit()
 
 	return nil
 

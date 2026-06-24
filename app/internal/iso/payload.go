@@ -50,7 +50,7 @@ func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
 
 func (iso *ISO8583) fileIsoPayload() error {
 
-	const errorMsgUnpackIso string = `Erro ao realizar parse na linha '%d' : %w.`
+	const errorMsgUnpackIso string = "Erro ao realizar parse na linha '%d' : %w."
 
 	var (
 		index, consumed, msgCount int

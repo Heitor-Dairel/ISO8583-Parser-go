@@ -8,6 +8,6 @@ func main() {
 
 	iso.NewParse(`C:\Users\heitor.tavares\OneDrive - TRIVALE ADMINISTRACAO LTDA\Operação Processadora - Arquivos CSU`)
 
-	iso.ParseISO85831993("26/05/2025", "CIC1", "26/05/2025", "CIC2", "26/05/2025", "CIC3")
+	iso.ParseISO85831993("02/06/2026", "CIC3")
 
 }

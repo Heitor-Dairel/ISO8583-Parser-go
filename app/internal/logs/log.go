@@ -145,7 +145,7 @@ func getDataCsv(dataParsed []*orderedmap.OrderedMap) (types.HeaderCsv, types.Out
 
 func (log *LogIso) logCsv() error {
 
-	const errorMsg string = `Erro ao criar csv para a data '%s' e ciclo '%s' : %w.`
+	const errorMsg string = "Erro ao criar csv para a data '%s' e ciclo '%s' : %w."
 	var (
 		header types.HeaderCsv
 		rows   types.OuterDataCsv
@@ -180,7 +180,7 @@ func (log *LogIso) logCsv() error {
 }
 func (log *LogIso) logTxt() error {
 
-	const errorMsg string = `Erro ao criar txt para a data '%s' e ciclo '%s' : %w.`
+	const errorMsg string = "Erro ao criar txt para a data '%s' e ciclo '%s' : %w."
 	var (
 		bytes types.Data
 		err   error

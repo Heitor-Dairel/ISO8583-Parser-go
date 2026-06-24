@@ -40,7 +40,7 @@ func rowHeaderSep() string {
 func renderHeader() string {
 
 	var (
-		title string = titleHeader.Render(" ⁜ Parser ISO8583-1993")
+		title string = titleHeader.Render(" ⁜  Parser ISO8583-1993")
 		sub   string = headerSubStyle.Render("  ·  Servnet Instituição de Pagamento Ltda  ·  🔴🟠 Mastercard")
 		left  string = title + sub
 		right string = badgeOK.Render("✓ OK")
@@ -72,7 +72,7 @@ func renderFooter(elapsed time.Duration) string {
 	return pad(left, right)
 }
 
-func (cust *CustomIso) PrintLog() {
+func (cust *CustomIso) PrintLogExit() {
 	var (
 		breakLine string = "\n"
 		sep       string = rowSep()

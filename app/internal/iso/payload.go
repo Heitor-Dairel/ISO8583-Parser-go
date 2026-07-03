@@ -61,13 +61,13 @@ func (iso *ISO8583) fileIsoPayload() error {
 		err                       error
 	)
 
+	msg = iso8583.NewMessage(speac.Iso85831993V1)
+
 	for index < lenRaw {
 
 		payload, consumed = extractIsoPayload(iso.FilePathIso.FileData, index, lenRaw)
 
 		index += consumed
-
-		msg = iso8583.NewMessage(speac.Iso85831993V1)
 
 		if err = msg.Unpack(payload); err != nil {
 			return fmt.Errorf(errorMsgUnpackIso, msgCount, err)

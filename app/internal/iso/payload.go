@@ -12,7 +12,7 @@ import (
 	"github.com/moov-io/iso8583"
 )
 
-func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
+func extractIsoPayload(data []byte, index, lenData int) (types.Data, int) {
 	var (
 		indexStart, indexCurr     int        = index, index
 		payload                   types.Data = make(types.Data, 0, 5000)
@@ -21,16 +21,16 @@ func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
 
 	for {
 
-		if indexCurr+4 > lenRaw {
+		if indexCurr+4 > lenData {
 			break
 		}
 
-		segId = int(raw[indexCurr+2] & 0xFF)
-		segLen = int(raw[indexCurr]&0xFF)<<8 | int(raw[indexCurr+1]&0xFF)
+		segId = int(data[indexCurr+2] & 0xFF)
+		segLen = int(data[indexCurr]&0xFF)<<8 | int(data[indexCurr+1]&0xFF)
 
 		payloadLen = segLen - 4
 
-		payload = append(payload, raw[indexCurr+4:indexCurr+4+payloadLen]...)
+		payload = append(payload, data[indexCurr+4:indexCurr+4+payloadLen]...)
 
 		indexCurr += 4 + payloadLen
 
@@ -38,7 +38,7 @@ func extractIsoPayload(raw []byte, index, lenRaw int) (types.Data, int) {
 			break
 		}
 
-		if indexCurr+2 < lenRaw && raw[indexCurr+2] == 0 {
+		if indexCurr+2 < lenData && data[indexCurr+2] == 0 {
 			break
 		}
 
@@ -54,7 +54,7 @@ func (iso *ISO8583) fileIsoPayload() error {
 
 	var (
 		index, consumed, msgCount int
-		lenRaw                    int = len(iso.FilePathIso.FileData)
+		lenData                   int = len(iso.FilePathIso.FileData)
 		payload                   types.Data
 		msg                       *iso8583.Message
 		parseOrdMap               *orderedmap.OrderedMap
@@ -63,9 +63,9 @@ func (iso *ISO8583) fileIsoPayload() error {
 
 	msg = iso8583.NewMessage(speac.Iso85831993V1)
 
-	for index < lenRaw {
+	for index < lenData {
 
-		payload, consumed = extractIsoPayload(iso.FilePathIso.FileData, index, lenRaw)
+		payload, consumed = extractIsoPayload(iso.FilePathIso.FileData, index, lenData)
 
 		index += consumed
 

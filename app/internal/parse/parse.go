@@ -10,7 +10,7 @@ import (
 	"github.com/moov-io/iso8583/field"
 )
 
-func parseDE048(raw string) *orderedmap.OrderedMap {
+func parseDE048(data string) *orderedmap.OrderedMap {
 
 	const (
 		lenTagField, lenPdsField int    = 4, 7
@@ -18,22 +18,22 @@ func parseDE048(raw string) *orderedmap.OrderedMap {
 	)
 
 	var (
-		lenRaw                       int = len(raw)
+		lenData                      int = len(data)
 		tag, value                   string
 		lenPds, sepParse, start, end int
 		err                          error
 		pds048                       *orderedmap.OrderedMap = orderedmap.New()
 	)
 
-	for sepParse < lenRaw {
-		tag = fmt.Sprintf("PDS%s", raw[sepParse:sepParse+lenTagField])
-		lenPds, err = strconv.Atoi(raw[sepParse+lenTagField : sepParse+lenPdsField])
+	for sepParse < lenData {
+		tag = fmt.Sprintf("PDS%s", data[sepParse:sepParse+lenTagField])
+		lenPds, err = strconv.Atoi(data[sepParse+lenTagField : sepParse+lenPdsField])
 		if err != nil {
 			log.Fatalln(errorMsg)
 		}
 		start = sepParse + lenPdsField
 		end = sepParse + lenPdsField + lenPds
-		value = raw[start:end]
+		value = data[start:end]
 		pds048.Set(tag, value)
 		sepParse = end
 	}
@@ -41,12 +41,12 @@ func parseDE048(raw string) *orderedmap.OrderedMap {
 
 }
 
-func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
+func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap {
 
 	var (
 		fieldBitPrimary   []int                  = make([]int, 0, 65)
 		fieldBitSecundary []int                  = make([]int, 0, 65)
-		keys              []int                  = make([]int, 0, len(raw))
+		keys              []int                  = make([]int, 0, len(data))
 		parseOrdMap       *orderedmap.OrderedMap = orderedmap.New()
 		dataElement       map[int]string         = make(map[int]string, 129)
 		de048, values     string
@@ -56,7 +56,7 @@ func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 		parseSet          func(key string, value any) = parseOrdMap.Set
 	)
 
-	for id = range raw {
+	for id = range data {
 		keys = append(keys, id)
 	}
 
@@ -78,7 +78,7 @@ func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 
 	for _, id = range keys {
 
-		parseField, _ = raw[id]
+		parseField, _ = data[id]
 
 		values, err = parseField.String()
 
@@ -114,7 +114,7 @@ func ParseBeautify(raw map[int]field.Field, lenRaw int) *orderedmap.OrderedMap {
 
 	}
 
-	parseSet("Length", lenRaw)
+	parseSet("Length", lenData)
 
 	return parseOrdMap
 

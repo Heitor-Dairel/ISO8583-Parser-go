@@ -29,7 +29,7 @@ func parseDE048(data string) *orderedmap.OrderedMap {
 		tag = fmt.Sprintf("PDS%s", data[sepParse:sepParse+lenTagField])
 		lenPds, err = strconv.Atoi(data[sepParse+lenTagField : sepParse+lenPdsField])
 		if err != nil {
-			logs.Loggers.Fatalln(errorMsg)
+			logs.Loggers.Fatal(errorMsg)
 		}
 		start = sepParse + lenPdsField
 		end = sepParse + lenPdsField + lenPds

@@ -2,10 +2,10 @@ package parse
 
 import (
 	"fmt"
-	"log"
 	"slices"
 	"strconv"
 
+	"github.com/Heitor-Dairel/ISO8583-Parser-go/app/internal/logs"
 	"github.com/iancoleman/orderedmap"
 	"github.com/moov-io/iso8583/field"
 )
@@ -29,7 +29,7 @@ func parseDE048(data string) *orderedmap.OrderedMap {
 		tag = fmt.Sprintf("PDS%s", data[sepParse:sepParse+lenTagField])
 		lenPds, err = strconv.Atoi(data[sepParse+lenTagField : sepParse+lenPdsField])
 		if err != nil {
-			log.Fatalln(errorMsg)
+			logs.Loggers.Fatal(errorMsg)
 		}
 		start = sepParse + lenPdsField
 		end = sepParse + lenPdsField + lenPds

@@ -41,19 +41,14 @@ func parseDE048(data string) *orderedmap.OrderedMap {
 
 }
 
-func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap {
+func orderKeys(data map[int]field.Field) ordKeys {
 
 	var (
-		fieldBitPrimary   []int                  = make([]int, 0, 65)
-		fieldBitSecondary []int                  = make([]int, 0, 65)
-		keys              []int                  = make([]int, 0, len(data))
-		parseOrdMap       *orderedmap.OrderedMap = orderedmap.New()
-		dataElement       map[int]string         = make(map[int]string, 129)
-		de048, values     string
-		parseField        field.Field
+		fieldBitPrimary   []int          = make([]int, 0, 65)
+		fieldBitSecondary []int          = make([]int, 0, 65)
+		keys              []int          = make([]int, 0, len(data))
+		dataElement       map[int]string = make(map[int]string, 129)
 		id                int
-		err               error
-		parseSet          func(key string, value any) = parseOrdMap.Set
 	)
 
 	for id = range data {
@@ -76,7 +71,24 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 	}
 
-	for _, id = range keys {
+	return ordKeys{keys: keys, fieldBitPrimary: fieldBitPrimary, fieldBitSecondary: fieldBitSecondary, dataElement: dataElement}
+}
+
+func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap {
+
+	var (
+		ordKeys       ordKeys
+		parseOrdMap   *orderedmap.OrderedMap = orderedmap.New()
+		de048, values string
+		parseField    field.Field
+		id            int
+		err           error
+		parseSet      func(key string, value any) = parseOrdMap.Set
+	)
+
+	ordKeys = orderKeys(data)
+
+	for _, id = range ordKeys.keys {
 
 		parseField, _ = data[id]
 
@@ -89,8 +101,8 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 		if id == 0 {
 
 			parseSet("MTI", values)
-			parseSet("BMP", fieldBitPrimary)
-			parseSet("BMS", fieldBitSecondary)
+			parseSet("BMP", ordKeys.fieldBitPrimary)
+			parseSet("BMS", ordKeys.fieldBitSecondary)
 
 		}
 
@@ -102,7 +114,7 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 		if id > 1 {
 
-			parseSet(dataElement[id], values)
+			parseSet(ordKeys.dataElement[id], values)
 
 		}
 

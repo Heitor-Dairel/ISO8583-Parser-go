@@ -45,7 +45,7 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 	var (
 		fieldBitPrimary   []int                  = make([]int, 0, 65)
-		fieldBitSecundary []int                  = make([]int, 0, 65)
+		fieldBitSecondary []int                  = make([]int, 0, 65)
 		keys              []int                  = make([]int, 0, len(data))
 		parseOrdMap       *orderedmap.OrderedMap = orderedmap.New()
 		dataElement       map[int]string         = make(map[int]string, 129)
@@ -71,7 +71,7 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 		}
 
 		if id >= 65 {
-			fieldBitSecundary = append(fieldBitSecundary, id)
+			fieldBitSecondary = append(fieldBitSecondary, id)
 		}
 
 	}
@@ -90,7 +90,7 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 			parseSet("MTI", values)
 			parseSet("BMP", fieldBitPrimary)
-			parseSet("BMS", fieldBitSecundary)
+			parseSet("BMS", fieldBitSecondary)
 
 		}
 

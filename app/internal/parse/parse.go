@@ -77,13 +77,14 @@ func orderKeys(data map[int]field.Field) ordKeys {
 func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap {
 
 	var (
-		ordKeys       ordKeys
-		parseOrdMap   *orderedmap.OrderedMap = orderedmap.New()
-		de048, values string
-		parseField    field.Field
-		id            int
-		err           error
-		parseSet      func(key string, value any) = parseOrdMap.Set
+		ordKeys     ordKeys
+		parseOrdMap *orderedmap.OrderedMap = orderedmap.New()
+		values      any
+		isMatch     bool
+		parseField  field.Field
+		id          int
+		err         error
+		parseSet    func(key string, value any) = parseOrdMap.Set
 	)
 
 	ordKeys = orderKeys(data)
@@ -106,12 +107,6 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 		}
 
-		if id == 48 {
-
-			de048 = values
-
-		}
-
 		if id > 1 {
 
 			parseSet(ordKeys.dataElement[id], values)
@@ -120,9 +115,9 @@ func ParseBeautify(data map[int]field.Field, lenData int) *orderedmap.OrderedMap
 
 	}
 
-	if de048 != "" {
+	if values, isMatch = parseOrdMap.Get("DE048"); isMatch {
 
-		parseSet("PDS", parseDE048(de048))
+		parseSet("PDS", parseDE048(values.(string)))
 
 	}
 
